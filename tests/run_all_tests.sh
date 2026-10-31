@@ -59,18 +59,19 @@ run_test_suite() {
     return
   fi
 
-  # Check if script is executable
-  if [[ ! -x "$test_script" ]]; then
-    chmod +x "$test_script"
-  fi
-
   print_suite_header "$suite_name"
 
   # Run test and measure time
   local start_time=$(date +%s.%N)
   local exit_code=0
 
-  if bash "$test_script"; then
+  local runner=(bash "$test_script")
+  if [[ "$test_script" == *.py ]]; then
+    # Python suites must never be run with bash (`import` would be ImageMagick's)
+    runner=(bash "${SCRIPT_DIR}/../scripts/run_python.sh" -m pytest -q "$test_script")
+  fi
+
+  if "${runner[@]}"; then
     exit_code=0
   else
     exit_code=$?

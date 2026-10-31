@@ -88,18 +88,12 @@ if [[ "$CHECK_ONLY" == false ]]; then
   echo "--- Phase 2: Python Packages ---"
   echo ""
 
-  if command -v python3 &>/dev/null; then
-    echo ":: Installing Python dependencies from requirements.txt..."
-    python3 -m pip install -q -r "${SCRIPT_DIR}/requirements.txt" 2>&1 | grep -v "already satisfied" || {
-      # PEP 668: externally-managed-environment (Debian 12+, Ubuntu 23.04+)
-      echo "   Retrying with --break-system-packages (PEP 668 environment)..." >&2
-      python3 -m pip install -q --break-system-packages -r "${SCRIPT_DIR}/requirements.txt" 2>&1 | grep -v "already satisfied" || true
-    }
-    echo "   Done."
-  else
-    echo "   WARNING: python3 not found. Skipping Python package installation."
-    echo "   Install Python 3 and run: pip install -r requirements.txt"
-  fi
+  # Automatic pip installation is DISABLED on purpose: it targeted whatever
+  # "python3" is on PATH (mise/system), which is the wrong environment.
+  # Python packages are managed with pixi (see pixi.toml) -- install manually:
+  #   pixi install
+  echo "   Automatic Python package installation is disabled."
+  echo "   Install manually with: cd \"${SCRIPT_DIR}\" && pixi install   (see pixi.toml)"
   echo ""
 
   # --- Phase 3: Node.js check ---
@@ -146,7 +140,7 @@ check_cmd "texfot   (Log Filter)"  "command -v texfot"
 check_cmd "pdftoppm (Poppler)"      "command -v pdftoppm"
 check_cmd "mogrify  (ImageMagick)"  "command -v mogrify"
 check_cmd "pandoc   (Conversion)"   "command -v pandoc"
-check_cmd "Python packages"         "python3 -c 'import matplotlib, numpy, pandas, jinja2'"
+check_cmd "Python packages"         "bash '${SCRIPT_DIR}/scripts/run_python.sh' -c 'import matplotlib, numpy, pandas, jinja2'"
 
 echo ""
 echo ":: Result: ${PASS}/${TOTAL} checks passed."

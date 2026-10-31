@@ -182,6 +182,10 @@ def plot_pie(data, ax, **kwargs):
         labels = data['labels']
         values = data['values']
         colors = kwargs.get('colors', None)
+        if not values or sum(values) == 0:
+            ax.text(0.5, 0.5, 'No data', ha='center', va='center', transform=ax.transAxes)
+            ax.axis('off')
+            return
         ax.pie(values, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors)
         ax.axis('equal')
     else:
@@ -210,7 +214,10 @@ def plot_box(data, ax, **kwargs):
         box_data = data['data']
         labels = data.get('labels', None)
         show_grid = kwargs.get('show_grid', False)
-        ax.boxplot(box_data, labels=labels)
+        try:
+            ax.boxplot(box_data, tick_labels=labels)  # matplotlib >= 3.9
+        except TypeError:
+            ax.boxplot(box_data, labels=labels)  # older matplotlib
         if show_grid:
             ax.grid(True, alpha=0.3, axis='y')
     else:

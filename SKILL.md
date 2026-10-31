@@ -81,8 +81,8 @@ Create any LaTeX document, compile to PDF, and generate PNG previews. Convert PD
 6. Copy the appropriate template from `assets/templates/` or write from scratch
 7. Customize content based on user requirements
 8. Generate external assets based on user's element choices:
-   - AI images: `python3 <skill_path>/../generate-image/scripts/generate_image.py "prompt" --output ./outputs/figure.png`
-   - matplotlib charts: `python3 <skill_path>/scripts/generate_chart.py <type> --data '<json>' --output chart.png`
+   - AI images: `bash <skill_path>/scripts/run_python.sh <skill_path>/../generate-image/scripts/generate_image.py "prompt" --output ./outputs/figure.png`
+   - matplotlib charts: `bash <skill_path>/scripts/run_python.sh <skill_path>/scripts/generate_chart.py <type> --data '<json>' --output chart.png`
    - Mermaid diagrams: `bash <skill_path>/scripts/mermaid_to_image.sh diagram.mmd output.png`
 9. **For documents 5+ pages:** Review the [Long-Form Document Anti-Patterns](#long-form-document-anti-patterns-must-read-for-reports-theses-books) section and run the Content Generation Checklist before compiling. Key rules: prefer prose over bullets, include global list compaction, escape `<`/`>` in text mode, vary section formats, limit `\newpage`, size images at 0.75-0.85 textwidth.
 10. Compile with `scripts/compile_latex.sh` (auto-detects XeLaTeX for CJK/RTL, glossaries, bibliography)
@@ -128,15 +128,15 @@ Fill existing PDF forms -- both fillable (with form fields) and non-fillable (im
 
 **Step 1: Check form type:**
 ```bash
-python3 <skill_path>/scripts/pdf_check_form.py form.pdf
+bash <skill_path>/scripts/run_python.sh <skill_path>/scripts/pdf_check_form.py form.pdf
 ```
 
 **If fillable** (has form fields):
 ```bash
 # Extract field metadata
-python3 <skill_path>/scripts/pdf_extract_fields.py form.pdf field_info.json
+bash <skill_path>/scripts/run_python.sh <skill_path>/scripts/pdf_extract_fields.py form.pdf field_info.json
 # Create field_values.json with values for each field, then fill
-python3 <skill_path>/scripts/pdf_fill_form.py form.pdf field_values.json output.pdf
+bash <skill_path>/scripts/run_python.sh <skill_path>/scripts/pdf_fill_form.py form.pdf field_values.json output.pdf
 ```
 
 **If non-fillable** (no form fields):
@@ -145,9 +145,9 @@ python3 <skill_path>/scripts/pdf_fill_form.py form.pdf field_values.json output.
 bash <skill_path>/scripts/pdf_to_images.sh form.pdf ./tmp/pages
 # Visually identify fields, create fields.json with bounding boxes
 # Validate bounding boxes (+ optional validation image)
-python3 <skill_path>/scripts/pdf_validate_boxes.py fields.json --image page_1.png --output validation.png --page 1
+bash <skill_path>/scripts/run_python.sh <skill_path>/scripts/pdf_validate_boxes.py fields.json --image page_1.png --output validation.png --page 1
 # Fill with text annotations
-python3 <skill_path>/scripts/pdf_fill_annotations.py form.pdf fields.json output.pdf
+bash <skill_path>/scripts/run_python.sh <skill_path>/scripts/pdf_fill_annotations.py form.pdf fields.json output.pdf
 ```
 
 ## Workflow: Advanced PDF Operations
